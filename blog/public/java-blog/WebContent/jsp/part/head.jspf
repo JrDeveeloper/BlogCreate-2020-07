@@ -1,0 +1,214 @@
+<%@ page import="java.util.List"%>
+<%@ page import="com.sbs.java.blog.dto.CateItem"%>
+<%@ page import="com.sbs.java.blog.dto.Member"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- 구글 폰트 불러오기 -->
+<!-- rotobo(400/900), notosanskr(400/900) -->
+<link
+	href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;900&family=Roboto:wght@400;900&display=swap"
+	rel="stylesheet">
+
+<!-- 폰트어썸 불러오기 -->
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.1/css/all.min.css">
+
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resource/css/common.css">
+<link rel="stylesheet"
+	href="${pageContext.request.contextPath}/resource/css/home/main.css">
+
+<!-- 제이쿼리 불러오기 -->
+<script
+	src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script src="${pageContext.request.contextPath}/resource/js/common.js"></script>
+<script
+	src="${pageContext.request.contextPath}/resource/js/home/main.js"></script>
+
+<%="<style>.form1 .form-row:not(:first-child) { margin-top : 10px; }</style>"%>
+
+
+<title>장희성 블로그 - ${pageTitle}</title>
+<script>
+	var loginedMemberId = parseInt("${loginedMemberId}");
+	var isLogined = "${isLogined}" == "true";
+	var loginedMember = null;
+</script>
+
+
+<script>
+	var param = {};
+</script>
+<c:forEach var="pageParameter" items="${param}">
+	<script>
+		param["${pageParameter.key}"] = "${pageParameter.value}";
+	</script>
+</c:forEach>
+
+<script>
+	if (!param.jsAction) {
+		param.jsAction = '';
+	}
+
+	var jsActions = param.jsAction.split(',');
+
+	for ( var key in jsActions) {
+		var jsActionFuncName = jsActions[key];
+
+		$(function() {
+			setTimeout(function() {
+				if (window[jsActionFuncName]) {
+					window[jsActionFuncName]();
+				} else {
+					console.error("jsAction으로 요청받은, " + jsActionFuncName
+							+ " 함수는 존재하지 않아서 실행하지 못했습니다.");
+				}
+			}, 100);
+		});
+	}
+</script>
+
+<c:if test="${isLogined}">
+	<script>
+		loginedMember = {};
+		loginedMember["id"] = parseInt("${loginedMember.id}");
+		loginedMember["regDate"] = "${loginedMember.regDate}";
+		loginedMember["loginId"] = "${loginedMember.loginId}";
+		loginedMember["name"] = "${loginedMember.name}";
+		loginedMember["nickname"] = "${loginedMember.nickname}";
+		loginedMember["email"] = "${loginedMember.email}";
+	</script>
+</c:if>
+
+</head>
+
+<body>
+	<div class="mobile-top-bar visible-on-sm-down flex">
+		<a href="#" class="btn-toggle-mobile-side-bar flex flex-ai-c"> <i
+			class="fas fa-bars"></i> <i class="fas fa-times"></i>
+		</a> <a href="${pageContext.request.contextPath}/s/home/main"
+			class="logo absolute-center absolute-middle flex flex-ai-c"> <i
+			class="fas fa-award"></i>
+		</a>
+	</div>
+	<div class="mobile-side-bar flex flex-ai-c visible-on-sm-down">
+		<nav class="menu-box-1 flex-grow-1">
+			<ul>
+				<c:if test="${isLogined}">
+					<li><a
+						href="${pageContext.request.contextPath}/s/member/doLogout?redirectUri=${encodedAfterLogoutRedirectUri}"
+						class="block">Logout</a></li>
+					<li><a
+						href="${pageContext.request.contextPath}/s/member/passwordForPrivate"
+						class="block">My Private</a></li>
+				</c:if>
+				<c:if test="${isLogined == false}">
+					<li><a
+						href="${pageContext.request.contextPath}/s/member/login?afterLoginRedirectUri=${encodedAfterLoginRedirectUri}"
+						class="block">Login</a></li>
+					<li><a href="${pageContext.request.contextPath}/s/member/join"
+						class="block">Join</a></li>
+				</c:if>
+				<li><a href="${pageContext.request.contextPath}/s/home/main"
+					class="block">Home</a></li>
+				<li><a
+					href="${pageContext.request.contextPath}/s/article/write"
+					class="block">Write</a></li>
+				<li><a href="#" class="block">Articles</a>
+					<ul>
+						<li><a
+							href="${pageContext.request.contextPath}/s/article/list"
+							class="block">전체</a></li>
+						<c:forEach items="${cateItems}" var="cateItem">
+							<li><a
+								href="${pageContext.request.contextPath}/s/article/list?cateItemId=${cateItem.id}"
+								class="block">${cateItem.name}</a></li>
+						</c:forEach>
+					</ul></li>
+				<li><a href="${pageContext.request.contextPath}/s/home/aboutMe"
+					class="block">AboutMe</a></li>
+				<li><a href="#" class="block">SNS</a>
+					<ul>
+						<li><a href="https://github.com/jhs512" target="_blank"
+							class="block">GITHUB</a></li>
+						<li><a href="https://github.com/jhs512" target="_blank"
+							class="block">INSTA</a></li>
+					</ul></li>
+			</ul>
+		</nav>
+	</div>
+	<div class="top-bar visible-on-md-up">
+		<div class="con flex flex-jc-sb height-100p">
+			<a href="${pageContext.request.contextPath}/s/home/main"
+				class="logo flex flex-ai-c"> <i class="fas fa-award"></i>
+			</a>
+
+			<nav class="menu-box-1">
+				<ul class="flex height-100p">
+					<c:if test="${isLogined}">
+						<li><a
+							href="${pageContext.request.contextPath}/s/member/doLogout?redirectUri=${encodedAfterLogoutRedirectUri}"
+							class="flex height-100p flex-ai-c">Logout</a></li>
+						<li><a
+							href="${pageContext.request.contextPath}/s/member/passwordForPrivate"
+							class="flex height-100p flex-ai-c">My Private</a></li>
+					</c:if>
+					<c:if test="${isLogined == false}">
+						<li><a
+							href="${pageContext.request.contextPath}/s/member/login?afterLoginRedirectUri=${encodedAfterLoginRedirectUri}"
+							class="flex height-100p flex-ai-c">Login</a></li>
+						<li><a
+							href="${pageContext.request.contextPath}/s/member/join"
+							class="flex height-100p flex-ai-c">Join</a></li>
+					</c:if>
+					<li><a href="${pageContext.request.contextPath}/s/home/main"
+						class="flex height-100p flex-ai-c">Home</a></li>
+					<li><a
+						href="${pageContext.request.contextPath}/s/article/write"
+						class="flex height-100p flex-ai-c">Write</a></li>
+
+					<li><a
+						href="${pageContext.request.contextPath}/s/article/list"
+						class="flex height-100p flex-ai-c">Articles</a>
+						<ul>
+							<c:forEach items="${cateItems}" var="cateItem">
+								<li><a
+									href="${pageContext.request.contextPath}/s/article/list?cateItemId=${cateItem.id}"
+									class="block">${cateItem.name}</a></li>
+							</c:forEach>
+						</ul></li>
+					<li><a
+						href="${pageContext.request.contextPath}/s/home/aboutMe"
+						class="flex height-100p flex-ai-c">AboutMe</a></li>
+					<li><a href="#" class="flex height-100p flex-ai-c">SNS</a>
+						<ul>
+							<li><a href="https://github.com/jhs512" target="_blank"
+								class="block">GITHUB</a></li>
+							<li><a href="https://github.com/jhs512" target="_blank"
+								class="block">INSTA</a></li>
+						</ul></li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+	<c:if test="${isLogined}">
+		<div class="con">${loginedMember.name}번회원님환영합니다.</div>
+		<c:if test="${loginedMember.extra.isNeedToChangePasswordForTemp}">
+			<div class="con">
+				현재 임시 비밀번호를 사용하고 있습니다. 비밀번호를 <a style="color:red" href="../member/passwordForPrivate">변경</a>해주세요.
+			</div>
+		</c:if>
+	</c:if>
+	<div class="con page-title">
+		<h1>${pageTitle}</h1>
+	</div>
